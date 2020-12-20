@@ -1,0 +1,176 @@
+version: '3.8'
+
+services:
+
+  mysql-container:
+    image: mysql:8.0
+    volumes:
+      - mysql-container:/var/lib/mysql
+    restart: always
+    ports:
+      - "3307:3307"
+    expose:
+      - 3307
+    environment:
+      - MYSQL_ROOT_PASSWORD=root123
+      - MYSQL_DATABASE=test_db
+      - MYSQL_USER=app_user
+      - MYSQL_PASSWORD=test123
+      - MYSQL_TCP_PORT=3307
+    networks:
+      - noga-network
+
+  mysql-container2:
+    image: mysql:8.0
+    volumes:
+      - mysql-container2:/var/lib/mysql
+    restart: always
+    ports:
+      - "3308:3308"
+    expose:
+      - 3308
+    environment:
+      - MYSQL_ROOT_PASSWORD=root123
+      - MYSQL_DATABASE=test_db
+      - MYSQL_USER=app_user
+      - MYSQL_PASSWORD=test123
+      - MYSQL_TCP_PORT=3308
+    networks:
+      - noga-network
+
+  mysql-container3:
+    image: mysql:8.0
+    volumes:
+      - mysql-container3:/var/lib/mysql
+    restart: always
+    ports:
+      - "3309:3309"
+    expose:
+      - 3309
+    environment:
+      - MYSQL_ROOT_PASSWORD=root123
+      - MYSQL_DATABASE=test_db
+      - MYSQL_USER=app_user
+      - MYSQL_PASSWORD=test123
+      - MYSQL_TCP_PORT=3309
+    networks:
+      - noga-network
+
+  mongo1:
+    image: mongo
+    command: mongod --port 27017
+    volumes:
+      - "mongo1:/data/db"
+    ports:
+      - "27017:27017"
+    networks:
+      - noga-network
+
+  mongo2:
+    image: mongo
+    command: mongod --port 27027
+    volumes:
+      - "mongo2:/data/db"
+    ports:
+      - "27027:27027"
+    networks:
+      - noga-network
+
+  mongo3:
+    image: mongo
+    command: mongod --port 27037
+    volumes:
+      - "mongo3:/data/db"
+    ports:
+      - "27037:27037"
+    networks:
+      - noga-network
+
+  noga-eureka-server:
+    image: noga-eureka-server
+    build:
+      context: ./noga-eureka-server
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "8761:8761"
+    networks:
+      - noga-network
+
+  noga-users-service:
+    image: noga-users-service
+    build:
+      context: ./noga-users-service
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "8100"
+    networks:
+      - noga-network
+
+  noga-service:
+    image: noga-service
+    build:
+      context: ./noga-service
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "8200"
+    networks:
+      - noga-network
+
+  noga-api-gateway:
+    image: noga-api-gateway
+    build:
+      context: ./noga-api-gateway
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "8080:8080"
+    networks:
+      - noga-network
+
+  noga-spring-cloud-config-server:
+    image: noga-spring-cloud-config-server
+    build:
+      context: ./noga-spring-cloud-config-server
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "8888:8888"
+    networks:
+      - noga-network
+
+  noga-git-config-server:
+    image: noga-git-config-server
+    build:
+      context: ./noga-git-config-server
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "8889:8889"
+    networks:
+      - noga-network
+
+networks:
+  noga-network:
+
+volumes:
+  mysql-container:
+  mysql-container2:
+  mysql-container3:
+  mongo1:
+  mongo2:
+  mongo3:
+
+# zbudowac projekt
+# mvn clean install -DskipTests
+
+# z poziomu pliku docker-compose.yml piszesz
+# docker-compose up -d
+
+# logs
+# docker-compose logs -f
+
+# graficzny podgląd kontenerów
+# http://localhost:8761/
